@@ -1,7 +1,10 @@
 import express from 'express'
-
+import userRouter from "./routers/router"
 export const port = 2029
 export const app = express()
 
+app.use(express.json())
 
-// export default app;
+app.use('/api',userRouter)
+
+export default app;

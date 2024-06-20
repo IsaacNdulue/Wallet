@@ -1,8 +1,8 @@
 import express from 'express'
 import  {app, port } from './app'
-import sequelize from './config/config';
+import sequelize from './config/configuration';
 
-sequelize.sync()
+sequelize.authenticate()
 .then(() => {
     console.log('All models were synchronized successfully.');
     app.listen(port, ()=>{
