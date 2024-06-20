@@ -8,6 +8,10 @@ class User extends Model {
   public password!: string;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
+    firstName: any;
+    username: any;
+    lastName: any;
+    phoneNumber: any;
 }
 
 User.init(
