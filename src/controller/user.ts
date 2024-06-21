@@ -1,8 +1,9 @@
 import { RequestHandler } from "express"
 import User from "../models/user"
+import Account from "../models/account"
+import Deposit from "../models/deposit"
 import bcrypt from "bcrypt"
 import jwt from 'jsonwebtoken';
-// require ('dotenv').config
 import dotenv from 'dotenv';
 import { Op } from "sequelize";
 
@@ -57,6 +58,46 @@ export const register: RequestHandler = async (req, res) => {
   };
 
 
+
+  export const createDeposit: RequestHandler = async (req, res) => {
+    try {
+      const id = req.params.id;
+      const { amount } = req.body;
+  
+      // Validate input data
+      if (!amount || isNaN(amount) || amount <= 0) {
+        return res.status(400).json({ error: 'Please provide a valid amount' });
+      }
+  
+      // Find the user to deposit to
+      const userToDeposit = await User.findByPk(id);
+      if (!userToDeposit) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      // Find the user's account
+      const userAccount = await Account.findOne({ where: { user_id: id } });
+      if (!userAccount) {
+        return res.status(404).json({ error: 'User account not found' });
+      }
+  
+      // Create a deposit record
+      const deposit = await Deposit.create({ user_id: id, amount });
+  
+      // Update the user's account balance
+      userAccount.balance += amount;
+      await userAccount.save();
+  
+      res.status(200).json({
+        message: `${amount} has been deposited to ${userToDeposit.username}. The updated balance is ${userAccount.balance}.`,
+        data: deposit,
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: error.message,
+      });
+    }
+  };
 
 export const login: RequestHandler = async (req, res) => {
     try {

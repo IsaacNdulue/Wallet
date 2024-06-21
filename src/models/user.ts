@@ -1,6 +1,7 @@
 import { DataTypes, Model } from 'sequelize';
 import  sequelize from '../config/configuration';
-
+import Account from "../models/account"
+import Deposit from "../models/deposit"
 class User extends Model {
   public id!: number;
   public name!: string;
@@ -50,8 +51,10 @@ User.init(
   },
   {
     tableName: 'users',
-    sequelize, // passing the sequelize instance is required
+    sequelize, 
   }
 );
 
+User.hasOne(Account, { foreignKey: 'user_id' });
+User.hasMany(Deposit, { foreignKey: 'user_id' });
 export default User;
