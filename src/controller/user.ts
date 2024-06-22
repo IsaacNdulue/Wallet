@@ -102,8 +102,8 @@ export const register: RequestHandler = async (req, res) => {
   
 export const deleteDeposit: RequestHandler = async (req, res) => {
     try {
-      const depositId = req.params.depositId;
-      const deposit = await Deposit.findByPk(depositId);
+      const id = req.params.id;
+      const deposit = await Deposit.findByPk(id);
   
       if (!deposit) {
         return res.status(404).json({ error: 'Deposit not found' });
