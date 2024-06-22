@@ -6,7 +6,8 @@ import sequelize from '../config/configuration';
 
 class Deposit extends Model {
   public id!: number;
-  public userId!: number;
+  public user_id!: number;
+  public account_id!: number;
   public amount!: number;
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -19,7 +20,7 @@ Deposit.init(
       autoIncrement: true,
       primaryKey: true,
     },
-    userId: {
+    user_id: {
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
@@ -28,6 +29,18 @@ Deposit.init(
       },
       onUpdate: 'CASCADE', 
       onDelete: 'CASCADE',
+      field: 'user_id',
+    },
+    account_id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      references: {
+        model: 'accounts', // Make sure this matches your Account table name in the database
+        key: 'id',
+      },
+      onUpdate: 'CASCADE', 
+      onDelete: 'CASCADE',
+      field: 'account_id', // Mapping to the database column name
     },
     amount: {
       type: DataTypes.DECIMAL(10, 2), 
@@ -41,5 +54,5 @@ Deposit.init(
 );
 
 
-Deposit.belongsTo(Account, { foreignKey: 'accountId' });
+Deposit.belongsTo(Account, { foreignKey: 'account_id' });
 export default Deposit;

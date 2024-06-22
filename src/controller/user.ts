@@ -55,17 +55,17 @@ export const register: RequestHandler = async (req, res) => {
       // Handle errors
       res.status(500).json({ error: error.message });
     }
-  };
+  }
 
 
-
-  export const createDeposit: RequestHandler = async (req, res) => {
+  export const makeDeposit: RequestHandler = async (req, res) => {
     try {
       const id = req.params.id;
       const { amount } = req.body;
   
       // Validate input data
-      if (!amount || isNaN(amount) || amount <= 0) {
+      const parsedAmount = parseFloat(amount);
+      if (isNaN(parsedAmount) || parsedAmount <= 0) {
         return res.status(400).json({ error: 'Please provide a valid amount' });
       }
   
@@ -82,14 +82,14 @@ export const register: RequestHandler = async (req, res) => {
       }
   
       // Create a deposit record
-      const deposit = await Deposit.create({ user_id: id, amount });
+      const deposit = await Deposit.create({ user_id: id, account_id: userAccount.id, amount: parsedAmount });
   
       // Update the user's account balance
-      userAccount.balance += amount;
+      userAccount.balance = parseFloat(userAccount.balance.toString()) + parsedAmount;
       await userAccount.save();
   
       res.status(200).json({
-        message: `${amount} has been deposited to ${userToDeposit.username}. The updated balance is ${userAccount.balance}.`,
+        message: `${parsedAmount} has been deposited to ${userToDeposit.username}. The updated balance is ${userAccount.balance}.`,
         data: deposit,
       });
     } catch (error) {
@@ -98,6 +98,58 @@ export const register: RequestHandler = async (req, res) => {
       });
     }
   };
+
+  
+export const deleteDeposit: RequestHandler = async (req, res) => {
+    try {
+      const depositId = req.params.depositId;
+      const deposit = await Deposit.findByPk(depositId);
+  
+      if (!deposit) {
+        return res.status(404).json({ error: 'Deposit not found' });
+      }
+  
+      await deposit.destroy();
+      res.status(200).json({ message: 'Deposit has been deleted successfully.' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+
+  export const deleteAllDeposits: RequestHandler = async (req, res) => {
+    try {
+      await Deposit.destroy({ where: {} });
+      res.status(200).json({ message: 'All deposits have been deleted successfully.' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+
+  export const history: RequestHandler = async (req, res) => {
+    try {
+      const id = req.params.id;
+  
+      // Find deposits for the user
+      const deposits = await Deposit.findAll({ where: { user_id: id } });
+  
+      // Convert Sequelize instances to plain objects
+      const userHistory = deposits.map(deposit => deposit.get({ plain: true }));
+  
+      // Sort user history by createdAt in descending order
+      userHistory.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  
+      res.status(200).json({
+        message: `All user's transactions count is ${userHistory.length}`,
+        data: userHistory
+      });
+    } catch (error) {
+      res.status(500).json({
+        error: error.message
+      });
+    }
+  };
+
 
 export const login: RequestHandler = async (req, res) => {
     try {

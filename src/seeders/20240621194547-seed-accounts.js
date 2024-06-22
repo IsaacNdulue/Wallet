@@ -5,7 +5,7 @@ module.exports = {
     
     return queryInterface.bulkInsert('accounts', [
       {
-        user_id: 1, 
+        user_id: 11, 
         account_number: '7063775404',
         balance: 1000.28,
         accounttype: 'savings',
@@ -14,7 +14,7 @@ module.exports = {
         updatedAt: new Date(),
       },
       {
-        user_id: 2,
+        user_id: 12,
         account_number: '1234567890',
         balance: 2800.00,
         accounttype: 'current',
