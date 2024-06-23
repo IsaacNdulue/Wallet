@@ -35,12 +35,12 @@ Deposit.init(
       type: DataTypes.INTEGER.UNSIGNED,
       allowNull: false,
       references: {
-        model: 'accounts', // Make sure this matches your Account table name in the database
+        model: 'accounts', 
         key: 'id',
       },
       onUpdate: 'CASCADE', 
       onDelete: 'CASCADE',
-      field: 'account_id', // Mapping to the database column name
+      field: 'account_id', 
     },
     amount: {
       type: DataTypes.DECIMAL(10, 2), 
