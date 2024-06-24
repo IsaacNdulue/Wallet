@@ -1,6 +1,6 @@
 import express from "express"
 import {login, register,getAll,getOne,findUser, makeDeposit,history,deleteDeposit,deleteAllDeposits} from "../controller/user"
-import { checkBalance, transferMoney } from  "../controller/account"
+import { checkBalance, transfer } from  "../controller/account"
 
 const userRouter = express.Router()
 
@@ -11,7 +11,7 @@ userRouter.get('/getOne/:id', getOne)
 userRouter.get('/findUser', findUser)
 userRouter.put('/makeDeposit/:id', makeDeposit)
 userRouter.get('/checkBalance/:id', checkBalance)
-userRouter.put('/transferMoney/:senderId/:receiverId', transferMoney)
+userRouter.put('/transfer/:senderId', transfer)
 userRouter.delete('/deleteDeposit/:id', deleteDeposit)
 userRouter.put('/deleteAllDeposits', deleteAllDeposits)
 userRouter.get('/history/:id', history)
